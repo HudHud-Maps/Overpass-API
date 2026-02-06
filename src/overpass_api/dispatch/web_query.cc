@@ -20,6 +20,8 @@
 #include "scripting_core.h"
 #include "../frontend/web_output.h"
 #include "../frontend/user_interface.h"
+#include "../core/auth_service.h"
+#include "../core/query_logger.h"
 #include "../statements/osm_script.h"
 #include "../statements/statement.h"
 #include "../../expat/expat_justparse_interface.h"
@@ -59,6 +61,32 @@ int main(int argc, char *argv[])
 
     if (error_output.display_encoding_errors())
       return 0;
+
+    // Authentication and Logging
+    Auth_Service auth_service;
+    Query_Logger query_logger;
+    
+    std::string api_key = "";
+    std::map< std::string, std::string >::const_iterator key_it = 
+        global_settings.get_input_params().find("key");
+    if (key_it != global_settings.get_input_params().end())
+      api_key = key_it->second;
+    
+    int user_id = auth_service.validate_key(api_key);
+    if (user_id == 0)
+    {
+      error_output.write_html_header("", "", 401, false);
+      error_output.runtime_error("Unauthorized: Invalid or missing Access Key. Please provide a valid 'key' parameter.");
+      return 0;
+    }
+    
+    std::string query_text = "";
+    std::map< std::string, std::string >::const_iterator data_it = 
+        global_settings.get_input_params().find("data");
+    if (data_it != global_settings.get_input_params().end())
+      query_text = data_it->second;
+    
+    query_logger.log_query(user_id, query_text, probe_client_identifier());
 
     Statement::Factory stmt_factory(global_settings);
     if (!parse_and_validate(stmt_factory, global_settings, global_settings.get_input_params().find("data")->second,

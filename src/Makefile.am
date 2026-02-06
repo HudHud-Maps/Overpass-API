@@ -163,7 +163,8 @@ libdispatcher_la_SOURCES = overpass_api/dispatch/resource_manager.cc overpass_ap
 libdispatcher_la_LIBADD = libdispatcherclient.la
 libexpatwrapper_la_SOURCES = expat/expat_justparse_interface.cc
 libexpatwrapper_la_LIBADD = -lexpat
-libfrontend_la_SOURCES = overpass_api/frontend/cgi-helper.cc overpass_api/frontend/user_interface.cc
+libfrontend_la_SOURCES = overpass_api/frontend/cgi-helper.cc overpass_api/frontend/user_interface.cc \
+                          overpass_api/core/auth_service.cc overpass_api/core/query_logger.cc
 libfrontend_la_LIBADD = liboutput.la
 liboutput_la_SOURCES = overpass_api/frontend/output.cc
 liboutput_la_LIBADD =
@@ -185,7 +186,7 @@ bin_dispatcher_SOURCES = template_db/dispatcher.cc template_db/file_tools.cc tem
 bin_dispatcher_LDADD = libdispatcher.la libfrontend.la libsettings.la
 
 cgi_bin_interpreter_SOURCES = ${statements_cc} ${output_formats_cc} overpass_api/frontend/basic_formats.cc overpass_api/frontend/hash_request.cc overpass_api/frontend/output_handler.cc overpass_api/dispatch/web_query.cc overpass_api/core/four_field_index.cc overpass_api/core/geometry.cc overpass_api/dispatch/scripting_core.cc overpass_api/dispatch/dispatcher_stub.cc template_db/types.cc overpass_api/frontend/decode_text.cc overpass_api/frontend/map_ql_parser.cc overpass_api/frontend/tokenizer_utils.cc overpass_api/frontend/web_output.cc template_db/zlib_wrapper.cc template_db/lz4_wrapper.cc
-cgi_bin_interpreter_LDADD = libcore.la libdata.la @COMPRESS_LIBS@
+cgi_bin_interpreter_LDADD = libcore.la libdata.la @COMPRESS_LIBS@ @POSTGRES_LIBS@
 cgi_bin_status_SOURCES = overpass_api/dispatch/public_status.cc template_db/types.cc
 cgi_bin_status_LDADD = libdispatcherclient.la libfrontend.la libsettings.la
 cgi_bin_timestamp_SOURCES = overpass_api/dispatch/db_timestamp.cc overpass_api/frontend/basic_formats.cc overpass_api/frontend/decode_text.cc overpass_api/frontend/web_output.cc expat/escape_xml.cc template_db/types.cc

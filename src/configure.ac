@@ -71,6 +71,13 @@ if test "$want_lz4" != "no"; then
   ])
 fi
 
+# Checks for PostgreSQL
+AC_CHECK_HEADERS([postgresql/libpq-fe.h], [], [
+  AC_CHECK_HEADERS([libpq-fe.h], [], [AC_MSG_ERROR([PostgreSQL headers not found])])
+])
+AC_CHECK_LIB([pq], [PQconnectdb], [POSTGRES_LIBS="-lpq"], [AC_MSG_ERROR([libpq not found])])
+AC_SUBST(POSTGRES_LIBS)
+
 AC_SUBST(COMPRESS_LIBS, ["$COMPRESS_LIBS"])
 
 AC_CONFIG_FILES([Makefile test-bin/Makefile])
