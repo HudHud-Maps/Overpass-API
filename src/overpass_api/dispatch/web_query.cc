@@ -67,16 +67,17 @@ int main(int argc, char *argv[])
     Query_Logger query_logger;
     
     std::string api_key = "";
-    std::map< std::string, std::string >::const_iterator key_it = 
-        global_settings.get_input_params().find("key");
-    if (key_it != global_settings.get_input_params().end())
-      api_key = key_it->second;
-    
+    const char* env_key = getenv("REDIRECT_OVERPASS_API_KEY");
+    if (!env_key)
+      env_key = getenv("OVERPASS_API_KEY");
+    if (env_key)
+      api_key = env_key;
+
     int user_id = auth_service.validate_key(api_key);
     if (user_id == 0)
     {
       error_output.write_html_header("", "", 401, false);
-      error_output.runtime_error("Unauthorized: Invalid or missing Access Key. Please provide a valid 'key' parameter.");
+      error_output.runtime_error("Unauthorized: Invalid or missing Access Key. Please use the URL format: /<your-api-key>/api/interpreter");
       return 0;
     }
     
