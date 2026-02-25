@@ -87,7 +87,8 @@ int main(int argc, char *argv[])
     if (data_it != global_settings.get_input_params().end())
       query_text = data_it->second;
     
-    query_logger.log_query(user_id, query_text, probe_client_identifier());
+    std::string client_name = Query_Logger::detect_client_name();
+    query_logger.log_query(user_id, query_text, probe_client_identifier(), client_name);
 
     Statement::Factory stmt_factory(global_settings);
     if (!parse_and_validate(stmt_factory, global_settings, global_settings.get_input_params().find("data")->second,

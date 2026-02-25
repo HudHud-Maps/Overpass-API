@@ -18,7 +18,10 @@ public:
     Query_Logger();
     ~Query_Logger();
 
-    void log_query(int user_id, const std::string& query, const std::string& ip_address);
+    void log_query(int user_id, const std::string& query, const std::string& ip_address,
+                   const std::string& client_name);
+
+    static std::string detect_client_name();
 
 private:
     std::string conn_info;
